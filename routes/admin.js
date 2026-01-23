@@ -1,13 +1,26 @@
 const express = require("express");
 const router = express.Router();
-const auth = require("../middleware/auth");
 
-router.get("/users", auth, (req, res) => {
-  res.json([
-    { login: "admin", role: "admin" },
-    { login: "trader1", role: "trader" },
-    { login: "client1", role: "client" }
-  ]);
+// 🔐 Простейшая проверка токена (пока тест)
+router.use((req, res, next) => {
+  const auth = req.headers.authorization;
+
+  if (!auth || auth !== "Bearer test-token-123") {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  next();
+});
+
+// 👤 СПИСОК ПОЛЬЗОВАТЕЛЕЙ
+router.get("/users", (req, res) => {
+  res.json({
+    success: true,
+    users: [
+      { login: "admin", role: "admin" },
+      { login: "trader1", role: "trader" }
+    ]
+  });
 });
 
 module.exports = router;
