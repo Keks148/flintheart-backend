@@ -24,3 +24,17 @@ router.get("/users", (req, res) => {
 });
 
 module.exports = router;
+const express = require("express");
+const router = express.Router();
+
+// тестовый admin endpoint
+router.get("/users", (req, res) => {
+  res.json({
+    success: true,
+    users: [
+      { id: 1, login: "admin", role: "admin" }
+    ]
+  });
+});
+
+module.exports = router;
