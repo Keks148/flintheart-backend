@@ -1,25 +1,19 @@
-const express = require("express");
+const router = require("express").Router();
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 
-const router = express.Router();
-
-router.post("/", async (req, res) => {
+router.post("/login", async (req, res) => {
   const { login, password } = req.body;
 
   const user = await User.findOne({ login });
-  if (!user || user.blocked) {
+  if (!user || user.password !== password) {
     return res.status(401).json({ error: "Invalid credentials" });
   }
-
-  const ok = await bcrypt.compare(password, user.password);
-  if (!ok) return res.status(401).json({ error: "Invalid credentials" });
 
   const token = jwt.sign(
     { id: user._id, role: user.role },
     process.env.JWT_SECRET,
-    { expiresIn: "24h" }
+    { expiresIn: "7d" }
   );
 
   res.json({ token, role: user.role });
