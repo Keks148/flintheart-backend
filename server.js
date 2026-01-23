@@ -1,27 +1,37 @@
-require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const connectDB = require("./config/db");
-
-const authRoutes = require("./routes/auth");
 
 const app = express();
 
-app.use(cors({
-  origin: "*",
-  methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
-
+app.use(cors());
 app.use(express.json());
 
-connectDB();
-
+/**
+ * ТЕСТ
+ */
 app.get("/", (req, res) => {
   res.json({ status: "ok", service: "Flintheart Backend" });
 });
 
-app.use("/auth", authRoutes);
+/**
+ * LOGIN
+ */
+app.post("/login", (req, res) => {
+  const { login, password } = req.body;
+
+  if (login === "admin" && password === "admin123") {
+    return res.json({
+      success: true,
+      token: "test-token-123",
+      role: "admin"
+    });
+  }
+
+  return res.status(401).json({
+    success: false,
+    message: "Неверный логин или пароль"
+  });
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
