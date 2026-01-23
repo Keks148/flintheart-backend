@@ -7,7 +7,16 @@ const authRoutes = require("./routes/auth");
 const adminRoutes = require("./routes/admin");
 
 const app = express();
-app.use(cors());
+
+// 🔥 CORS ДЛЯ TELEGRAM MINI APP
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
+app.options("*", cors()); // ← ОБЯЗАТЕЛЬНО
+
 app.use(express.json());
 
 mongoose.connect(process.env.MONGO_URI)
@@ -22,6 +31,7 @@ app.get("/health", (req, res) => {
   res.json({ status: "healthy" });
 });
 
+// 🔑 ROUTES
 app.use("/login", authRoutes);
 app.use("/admin", adminRoutes);
 
